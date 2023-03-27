@@ -31,7 +31,7 @@ function checksCreateTodosUserAvailability(request, response, next) {
     return next();
   }
 
-  return response.status(404).json({ error: "Reached limit of Todos"});
+  return response.status(403).json({ error: "Reached limit of Todos"});
 }
 
 function checksTodoExists(request, response, next) {
@@ -44,9 +44,15 @@ function checksTodoExists(request, response, next) {
     return response.status(404).json({ error: "User not found!"});
   }
 
+  validated = validate(id, 4);
+
+  if(!validated) {
+    return response.status(400).json({ error: 'Invalid id' });
+  }
+
   const todo = user.todos.find(todo => todo.id === id);
 
-  if(!todo && validate(id, 4)){
+  if(!todo){
     return response.status(404).json({ error: 'Todo not found' });
   }
 
